@@ -1,0 +1,117 @@
+<script>
+  var VERYGLOBAL = 0;
+  (function () {
+    'use strict';
+    //if (!angular) return;
+    angular.module('app', ['ngRoute', 'ui.bootstrap', 'controllers', 'factory.gsrun'])
+      .config(function ($routeProvider, $locationProvider) {
+        $routeProvider
+          .when('/', {
+            templateUrl: '/home.tpl',
+            controller: 'HomeController',
+            resolve: {
+              data: function (gsrun) {
+                return gsrun.exec('getData');
+              }
+            }
+          })
+          .when('/auth', {
+            resolveRedirectTo: function ($rootScope, $route, gsrun) {
+              var properties = {
+                'api': 'account-info'
+              };
+              return gsrun.exec('ya', properties).then(function (response) {
+                console.log('when /auth response', response);
+                if (response.authorizationUrl)
+                  return '/authpage?authorizationUrl=' + encodeURIComponent(response.authorizationUrl);
+                $rootScope.authAccount = response;
+                return '/';
+              });
+            }
+          })
+          .when('/authpage', {
+            templateUrl: '/authpage.tpl',
+            controller: 'AuthController',
+          })
+          .when('/reset', {
+            resolveRedirectTo: function ($rootScope, $route, gsrun) {
+              return gsrun.exec('reset').then(function (response) {
+                $rootScope.authAccount = undefined;
+                console.log('when /reset response', response);
+                return '/';
+              });
+            }
+          })
+          .when('/handleCode/:code', {
+            resolveRedirectTo: function ($rootScope, $route, gsrun) {
+              console.log('code', $route.current.params.code);
+              return gsrun.exec('handleCode', $route.current.params.code).then(function (response) {
+                return '/';
+              });
+            }
+          })
+          /*
+          .when('/settings', {
+            templateUrl: '/html.standalone.controller.SettingsController.tpl',
+            controller: 'SettingsController',
+            resolve: {
+              settings: function(gsrun) {
+                return gsrun.exec('getSettings');
+              }
+            }
+          })
+          .when('/settings/:id', {
+            resolveRedirectTo: function(gsrun, $route) {
+              var properties = {
+                sourceId: $route.current.params.id
+              };
+              return gsrun.exec('setSettings', properties).then(function(response) {
+                console.log('response', response);
+                return '/';
+              }).catch(function(error) {
+                console.log(error);
+                return '/';
+              });
+            }
+          })
+          .when('/about', {
+            templateUrl: '/html.app.controller.about.tpl',
+          })
+          */
+
+          .otherwise({
+            redirectTo: '/'
+          });
+
+        $locationProvider.html5Mode({
+          enabled: true,
+          requireBase: false
+        });
+      })
+      /*
+      .filter('viewValueAdvance', function () {
+        //{TODO To improve on the spaces to the filter}
+        return function () {
+          console.log(arguments);
+        }
+      })
+      */
+      .run(function ($rootScope, $location) {
+        $rootScope.authAccount = undefined;
+        // register listener to watch route changes
+        $rootScope.$on('$routeChangeStart', function (event, next, current) {
+          console.log('run $routeChangeStart', 'event', event, 'next', next, 'current', current);
+          if (!$rootScope.authAccount) {
+            // no logged user, we should be going to #login
+            if (next.templateUrl === '/authpage.tpl' || (next.$$route && next.$$route.originalPath === '/handleCode/:code')) {
+              // already going to #login, no redirect needed
+            } else {
+              // not going to #login, we should redirect now
+              $location.path('/auth');
+            }
+          }
+        });
+      })
+  })();
+
+</script>

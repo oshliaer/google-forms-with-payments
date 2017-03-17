@@ -1,0 +1,16 @@
+<script type="text/ng-template" id="/home.tpl">
+  <div>
+    {{authAccount.account}}<a href="/reset">[exit]</a>
+  </div>
+</script>
+<script type="text/ng-template" id="/authpage.tpl">
+  <div>
+    Перейдите по <a data-ng-href="{{authorizationUrl}}" target="_blank">ссылке</a> и добавьте код из адресной строки
+    <input type="text" data-ng-model="code"><a data-ng-href="/handleCode/{{code}}">Отправить</a> {{code}}
+  </div>
+</script>
+<script type="text/ng-template" id="/error.tpl">
+  <div>
+    ERROR
+  </div>
+</script>

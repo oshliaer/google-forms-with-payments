@@ -1,0 +1,41 @@
+<script>
+  (function (angular) {
+    'use strict';
+
+    angular.module('controllers', [])
+
+      .controller('MainController', function ($scope, gsrun) {
+        $scope.status = function () {
+          return gsrun.getStatus(function (status) {
+            /*
+            Do you using Materialize?
+            if (status === 0)
+              Materialize.updateTextFields();
+            */
+            return status;
+          });
+        }
+      })
+      .controller('HomeController', function ($rootScope, $scope, gsrun, data) {
+        console.log('HomeController');
+        $scope.data = data;
+      })
+      .controller('AuthController', function ($rootScope, $scope, $location, gsrun) {
+        $scope.code = '';
+        $scope.authorizationUrl = $location.$$search.authorizationUrl;
+      })
+
+    /*
+    .controller('SettingsController', function($scope, settings) {
+      $scope.settings = settings;
+    })
+
+    .controller('NavController', function($scope, $location) {
+      $scope.isActive = function(viewLocation) {
+        return viewLocation === $location.path();
+      };
+    })
+    */
+  })(window.angular);
+
+</script>

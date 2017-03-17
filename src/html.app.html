@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <?!= include('css.css'); ?>
+</head>
+
+<body data-ng-app="app" data-ng-cloak>
+  <div data-ng-controller="MainController">
+    <div data-ng-show="status()">
+      <div>progress...</div>
+    </div>
+    <div data-ng-hide="status()">
+      <div>
+        <div ng-view></div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.2/angular.min.js" integrity="sha256-tEs9bhzEBF4Z6jRNx8l0bMA2YrVN7NpR31vs8zAoVWo="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.2/angular-route.min.js" integrity="sha256-BHu4EH/ticEzI5Rk2g3zh5smn5BP4yMwnZrLOCOzqGM="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js" integrity="sha256-tyfWW2LtJQNI+l3F0h6xDV/ij6Mfn8lwSKHWOsmEgXM="
+    crossorigin="anonymous"></script>
+
+  <?!= include('js.app'); ?>
+    <?!= include('js.factory.gsrun'); ?>
+      <?!= include('js.controllers'); ?>
+        <?!= include('html.tpls'); ?>
+</body>
+
+</html>

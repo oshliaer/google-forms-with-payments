@@ -1,0 +1,59 @@
+<script>
+  (function(angular) {
+    'use strict';
+    //if (!angular) return;
+
+    function gsrun($q) {
+      //Allow to check current state of promise
+      var status = [];
+
+      return {
+        exec: exec,
+        getStatus: getStatus
+      }
+
+      //{TODO Implement $timeout promise}
+      function getStatus(callback) {
+        if (typeof callback === 'function')
+          setTimeout(function() {
+            callback(status.length);
+          }, 0);
+        return status.length;
+      }
+
+      var logFnFactoty = function() {
+        return function() {}
+      };
+
+      function exec(api, /*userObject,*/ params) {
+        status.push(new Date().getTime());
+        console.log(status);
+        return $q(function(onSuccess, onFailure) {
+          /*
+          if (!onSuccess || typeof onSuccess !== 'function')
+            onSuccess = logFnFactoty();
+          if (!onFailure || typeof onFailure !== 'function')
+            onFailure = logFnFactoty();
+          */
+          google.script.run
+            .withSuccessHandler(onSuccess)
+            .withFailureHandler(onFailure)
+            /*.withUserObject(userObject)*/
+            [api](params);
+        }).then(function(responce) {
+          status.shift();
+          return responce;
+        }, function(err) {
+          status.shift();
+          // Don't forget switch on
+          console.log('gsrun', err);
+          return {
+            error: err
+          }
+        });
+      }
+
+    }
+    angular.module('factory.gsrun', []).factory('gsrun', ['$q', gsrun]);
+  })(window.angular);
+</script>
